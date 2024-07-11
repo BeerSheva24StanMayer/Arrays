@@ -24,9 +24,7 @@ public static int[] insert(int[] ar, int index, int number) {
 public static int[] remove(int[] numbers, int index) {
     int [] numbersNew = new int[numbers.length - 1];
     System.arraycopy(numbers, 0, numbersNew, 0, index);
-    // if (index < numbers.length) {
     System.arraycopy(numbers, index + 1 , numbersNew, index, numbers.length - index -1);
-    // }
     return numbersNew; 
 }
 }

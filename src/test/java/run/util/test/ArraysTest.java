@@ -2,13 +2,11 @@ package run.util.test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import org.junit.jupiter.api.Test;
 import static run.util.Arrays.*;
 
-import javax.lang.model.type.NullType;
 
 public class ArraysTest {
 int[] numbers = {10, 7, 12, -4, -13, 3, 14};
