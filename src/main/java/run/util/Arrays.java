@@ -27,4 +27,30 @@ public static int[] remove(int[] numbers, int index) {
     System.arraycopy(numbers, index + 1 , numbersNew, index, numbers.length - index -1);
     return numbersNew; 
 }
+public static boolean pushMaxAtTheEnd(int [] ar, int length) {
+    boolean res = true;
+    for (int i = 0; i < length; i++) {
+        if (ar[i] > ar[i + 1]) {
+            res = true;
+            swap(ar, i, i + 1);
+        }
+    }
+    return res; 
+}
+private static void swap(int[] ar, int i, int j) {
+    int tmp = ar[i];
+    ar[i] = ar[j];
+    ar[j] = tmp;
+}
+public static void sort(int [] ar) {
+    for(int i = 0; i < ar.length; i++) {
+        int length = ar.length - 1;
+        boolean flSorted = false;
+        while(!flSorted) {
+            length--;
+            flSorted = pushMaxAtTheEnd(ar, length);
+        }
+    }
+}
+
 }
