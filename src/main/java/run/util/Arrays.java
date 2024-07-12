@@ -31,7 +31,7 @@ public static boolean pushMaxAtTheEnd(int [] ar, int length) {
     boolean res = true;
     for (int i = 0; i < length; i++) {
         if (ar[i] > ar[i + 1]) {
-            res = true;
+            res = false;
             swap(ar, i, i + 1);
         }
     }
@@ -42,15 +42,75 @@ private static void swap(int[] ar, int i, int j) {
     ar[i] = ar[j];
     ar[j] = tmp;
 }
+
 public static void sort(int [] ar) {
-    for(int i = 0; i < ar.length; i++) {
-        int length = ar.length - 1;
+        int length = ar.length;
         boolean flSorted = false;
         while(!flSorted) {
             length--;
             flSorted = pushMaxAtTheEnd(ar, length);
         }
     }
-}
 
+    public static int binarySearch(int [] ar, int key) {
+        sort(ar);
+        int flIndex = -1;
+        int lower = 0;
+        int upper = ar.length - 1;
+        while (lower <= upper) {
+            int middle = lower + (upper - lower) / 2;
+            if (ar[middle] == key) {
+                upper = lower - 1;
+                flIndex = middle;
+            }
+            else if (ar[middle] < key) {
+                lower = middle + 1;
+            } 
+            else {
+                upper = middle - 1;
+            } 
+        }
+        return flIndex;      
+    }
+    public static int[] insertSorted(int[] arSorted, int number) {
+        int flIndex = - 1;
+        int lower = 0;
+        int upper = arSorted.length - 1;
+        while (lower <= upper) {
+            int middle = lower + (upper - lower) / 2;
+            if (arSorted[middle] == number) {
+                upper = lower - 1;
+                flIndex = middle + 1;
+            }
+            else if (arSorted[middle] < number) {
+                lower = middle + 1;
+                flIndex = middle + 1;
+            } 
+            
+            else {
+                upper = middle - 1;
+                flIndex = middle;
+            } 
+        }
+        int [] arNew = java.util.Arrays.copyOf(arSorted, arSorted.length + 1);
+        System.arraycopy(arSorted,flIndex , arNew, flIndex + 1, arSorted.length - flIndex);
+        arNew[flIndex] = number;
+        return arNew;
+    }
+    public static boolean isOneSwap(int [] array) {
+        boolean flSorted = false;
+        int[] arNonSorted = java.util.Arrays.copyOf(array, array.length);
+        sort(array);
+        int counter = 0;
+        for(int i = 0; i < arNonSorted.length; i++) {
+            if(arNonSorted[i] != array[i]) {
+                counter++;
+            }
+        }
+        if(counter == 2) {
+            flSorted = true;
+        }
+        return flSorted;
+    }
+       
 }
