@@ -80,15 +80,14 @@ private int[] getRandomArray(int nElements) {
 }
 @Test
 void binSearchTest() {
-    int [] one = {10};
     assertEquals(3, binarySearch(numbers, 10));
     assertEquals(5, binarySearch(numbers, 13));
     assertEquals(1, binarySearch(numbers, 3));
     assertEquals(0, binarySearch(numbers, -4));
     assertEquals(6, binarySearch(numbers, 14));
-    assertEquals(-1, binarySearch(numbers, 20));
     assertEquals(-1, binarySearch(numbers, -100));
-    assertEquals(0, binarySearch(one, 10));
+    assertEquals(-2, binarySearch(numbers, 0));
+    assertEquals(-5, binarySearch(numbers, 11));  
 }
 @Test
 void insertSortedTest() {
@@ -96,6 +95,7 @@ int [] testNumbers = java.util.Arrays.copyOf(numbers, numbers.length);
 sort(testNumbers);
 int number1 = -10;
 int [] expected1 = {number1, -4, 3, 7, 10, 12, 13, 14};
+// assertEquals(0, insertSorted(testNumbers, number1));
 assertArrayEquals(expected1, insertSorted(testNumbers, number1));
 int number2 = 4;
 int [] expected2 = {-4, 3, number2, 7, 10, 12, 13, 14};
@@ -123,7 +123,11 @@ void isOneSwapTest() {
     assertEquals(true, isOneSwap(arSwap3));
     int[] arSwap4 = {-10, 9, 15, 18, 20, 30, 400, 45};
     assertEquals(true, isOneSwap(arSwap4));
-    int[] arSwap5 = {-10, 45, 15, 18, 20, 30, 9, 400};
+    int[] arSwap5 = {-10, 9, 18, 15, 20, 30, 45, 400};
     assertEquals(true, isOneSwap(arSwap5));
+    int[] arSwap6 = {-10, 45, 15, 18, 20, 30, 9, 400};
+    assertEquals(true, isOneSwap(arSwap6));
+    int[] arSwap7 = {18, 15, -10, 9, 45, 30, 20, 400};
+    assertEquals(false, isOneSwap(arSwap7));
 }
 }
