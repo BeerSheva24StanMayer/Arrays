@@ -157,7 +157,6 @@ public class Arrays {
         array[j] = tmp;
     }
     public static <T> int binarySearch(T[] array, T key, Comparator<T> comp) {
-        sort(array, comp);
         int indexH = array.length - 1;
         int indexL = 0;
         int indexM = (indexH + indexL)/2;
