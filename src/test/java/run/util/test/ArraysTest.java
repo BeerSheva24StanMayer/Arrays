@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+
 import org.junit.jupiter.api.Test;
 import static run.util.Arrays.*;
 
@@ -161,6 +162,39 @@ void searchAnyTypeTest() {
     assertEquals(-5, binarySearch(numbers, 45, new ComparatorInteger()));
     assertEquals(-6, binarySearch(numbers, 60, new ComparatorInteger()));
 }
+@Test
+void binarySearchNoComparatorTest() {
+    String [] strings = {"aa", "cfta", "lmn", "w"};
+    Person prs1 = new Person(10, "Vasya");
+    Person prs2 = new Person(20, "Itay");
+    Person prs3 = new Person(30, "Sara");
+    Person [] persons = {prs1, prs2, prs3};
+    // assertEquals(1, java.util.Arrays.binarySearch(strings, "cfta"));
+    // assertEquals(0, java.util.Arrays.binarySearch(persons, prs1));
+    assertEquals(-1, binarySearch(persons, new Person(5, "Sara")));
+    assertEquals(-4, binarySearch(persons, new Person(40, "Serg")));
+}
 
+@Test
+void evenOddSorting() {
+    Integer[] array = {7, -8, 10, -100, 13, -10, 99};
+    Integer[] expected = {-100, -10, -8, 10, 99, 13, 7}; //even numbers in ascending order first, odd numbers in descending order after that
+    sort(array, new EvenOddComparator());
+    assertArrayEquals(expected, array);
+}
+@Test
+void removeIfTest() {
+    Integer[] array = {7, -8, 10, -100, 13, -10, 99};
+    Integer [] expected = {-8, 10, -100, -10};
+    assertArrayEquals(expected, removeIf(array, new OddNumbersPredicate()));
+    Integer [] expected1 = {7, 13, 99};
+    assertArrayEquals(expected1, removeIf(array, new EvenNumbersPredicate()));
+}
+@Test
+void findTest() {
+    Integer[] array = {7, -8, 10, -100, 13, -10, 99};
+    Integer [] expected = {7, 13, 99};
+    assertArrayEquals(expected, find(array, new OddNumbersPredicate()));
+}
 }
 

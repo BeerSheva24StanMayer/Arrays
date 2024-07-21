@@ -1,6 +1,8 @@
 package run.util;
 
+import java.security.Key;
 import java.util.Comparator;
+import java.util.function.Predicate;
 
 public class Arrays {
     public static int search(int[] ar, int key) {
@@ -59,30 +61,18 @@ public class Arrays {
     }
 
     public static int binarySearch(int[] ar, int key) {
-        sort(ar);
-        int flIndex = -1;
-        int lower = 0;
-        int upper = ar.length - 1;
-        while (lower <= upper) {
-            int middle = lower + ((upper - lower) / 2);
-            if (ar[middle] == key) {
-                upper = lower - 1;
-                flIndex = middle;
-            } else if (ar[middle] < key && middle == 0 && upper == lower) {
-                upper = middle - 1;
-                flIndex = -middle - 2;
-            } else if (ar[middle] < key && middle == ar.length - 1 && upper == lower) {
-                lower = middle + 1;
-                flIndex = -middle - 2;
-            } else if (ar[middle] < key) {
-                lower = middle + 1;
-                flIndex = -middle - 2;
-            } else if (ar[middle] > key) {
-                upper = middle - 1;
-                flIndex = -middle - 1;
+        int left = 0;
+        int right = ar.length - 1;
+        int middle = (left + right) / 2;
+        while (left <= right && ar[middle] != key) {
+            if (key < ar[middle]) {
+                right = middle - 1;
+            } else {
+                left = middle + 1;
             }
+            middle = (left + right) / 2;
         }
-        return flIndex;
+        return left > right ? -(left + 1) : middle;
     }
 
     public static int[] insertSorted(int[] arSorted, int number) {
@@ -135,20 +125,23 @@ public class Arrays {
         }
         return flOut;
     }
+
     public static <T> void sort(T[] array, Comparator<T> comparator) {
         int length = array.length;
         boolean flSort = false;
+
         do {
             length--;
             flSort = true;
-            for(int i = 0; i < length; i++) {
-                if(comparator.compare(array[i], array[i + 1]) > 0) {
+            for (int i = 0; i < length; i++) {
+
+                if (comparator.compare(array[i], array[i + 1]) > 0) {
                     swap(array, i, i + 1);
                     flSort = false;
                 }
-            
+
             }
-        }while(!flSort);
+        } while (!flSort);
     }
 
     private static <T> void swap(T[] array, int i, int j) {
@@ -156,20 +149,60 @@ public class Arrays {
         array[i] = array[j];
         array[j] = tmp;
     }
+
     public static <T> int binarySearch(T[] array, T key, Comparator<T> comp) {
         int indexH = array.length - 1;
         int indexL = 0;
-        int indexM = (indexH + indexL)/2;
-        while(indexL <= indexH && array[indexM] != key) {
-            
-            if(comp.compare(array[indexM], key) > 0) {
+        int indexM = (indexH + indexL) / 2;
+        int comRes = 0;
+        while (indexL <= indexH && (comRes = comp.compare(array[indexM], key)) != 0) {
+            if (comRes > 0) {
                 indexH = indexM - 1;
-            }
-            else {
+            } else {
                 indexL = indexM + 1;
             }
-            indexM = (indexH + indexL)/2;
+            indexM = (indexH + indexL) / 2;
         }
         return indexL > indexH ? -(indexL + 1) : indexM;
+    }
+
+    public static <T> int binarySearch(T[] array, T key) {
+        // TODO
+        // The code should be based on binarySearch
+        int indexH = array.length - 1;
+        int indexL = 0;
+        int indexM = (indexH + indexL) / 2;
+        int comRes = 0;
+        while (indexL <= indexH && (comRes = -(((Comparable) key).compareTo(array[indexM]))) != 0) { // I know it is not right, still on my way to figure out to get the right solution
+            if (comRes > 0) {
+                indexH = indexM - 1;
+            } else {
+                indexL = indexM + 1;
+            }
+            indexM = (indexH + indexL) / 2;
+        }
+        return indexL > indexH ? -(indexL + 1) : indexM;
+    }
+
+    public static <T> T[] insert(T[] array, int index, T item) {
+        T[] res = java.util.Arrays.copyOf(array, array.length + 1);
+        System.arraycopy(array, index, res, index + 1, array.length - index);
+        res[index] = item;
+        return res;
+    }
+
+    public static <T> T[] find(T[] array, Predicate<T> predicate) {
+        T[] result = java.util.Arrays.copyOf(array, 0);
+        for (int i = 0; i < array.length; i++) {
+            if (predicate.test(array[i])) {
+                result = insert(result, result.length, array[i]);
+            }
+        }
+        return result;
+
+    }
+
+    public static <T> T[] removeIf(T[] array, Predicate<T> predicate) {
+        return find(array, predicate.negate());
     }
 }
