@@ -1,8 +1,14 @@
 package run.util;
 
 import java.security.Key;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.function.Predicate;
+
+import org.w3c.dom.css.Counter;
+
+import run.util.CharacterRule;
 
 public class Arrays {
     public static int search(int[] ar, int key) {
@@ -166,22 +172,11 @@ public class Arrays {
         return indexL > indexH ? -(indexL + 1) : indexM;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> int binarySearch(T[] array, T key) {
         // TODO
         // The code should be based on binarySearch
-        int indexH = array.length - 1;
-        int indexL = 0;
-        int indexM = (indexH + indexL) / 2;
-        int comRes = 0;
-        while (indexL <= indexH && (comRes = -(((Comparable) key).compareTo(array[indexM]))) != 0) { // I know it is not right, still on my way to figure out to get the right solution
-            if (comRes > 0) {
-                indexH = indexM - 1;
-            } else {
-                indexL = indexM + 1;
-            }
-            indexM = (indexH + indexL) / 2;
-        }
-        return indexL > indexH ? -(indexL + 1) : indexM;
+        return binarySearch(array, key, (Comparator<T>) Comparator.naturalOrder());
     }
 
     public static <T> T[] insert(T[] array, int index, T item) {
@@ -204,5 +199,48 @@ public class Arrays {
 
     public static <T> T[] removeIf(T[] array, Predicate<T> predicate) {
         return find(array, predicate.negate());
+    }
+
+    /**
+     * 
+     * @param chars         - array of char primitives
+     * @param mustBeRules   - array of rules that must be true
+     * @param mustNotBeRule array of rules that must be false
+     * @return empty error message if array of chars matches all rules otherwise
+     *         specific error message saying what rules don't match
+     */
+    public static String matchesRules(char[] chars, CharacterRule[] mustBeRules, CharacterRule[] mustNotBeRules) {
+        // TODO
+        int j = 0;
+        int k = 0;
+        ArrayList<String> messages = new ArrayList<String>();
+        int count = 0;
+        while ((j < mustBeRules.length) && (mustBeRules.length > messages.size())) {
+            boolean flagMust = true;
+            int i = 0;
+            while (i < chars.length && flagMust) {
+                flagMust = mustBeRules[j].ifTrue(chars[i]);
+                i++;
+            }
+            if (flagMust) {
+                messages.add(mustBeRules[j].errorMessage);
+                count++;
+            }
+            j++;
+        }
+        while ((k < mustNotBeRules.length) && (mustNotBeRules.length > (messages.size() - count))) {
+            boolean flagNotMust = false;
+            int i = 0;
+            boolean b = mustNotBeRules[k].flag;
+            while (i < chars.length && !flagNotMust) {
+                flagNotMust = mustNotBeRules[k].ifTrue(chars[i]);
+                i++;
+            }
+            if (flagNotMust) {
+                messages.add(mustNotBeRules[k].errorMessage);
+            }
+            k++;
+        }
+        return String.join(" || ", messages);
     }
 }

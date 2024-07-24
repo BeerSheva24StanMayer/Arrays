@@ -7,7 +7,7 @@ public class Person implements Comparable<Person>{
         this.id = id;
         this.name = name;
     }
-    public long getID() {
+    public long getId() {
         return id;
     }
     public String getName() {
@@ -17,4 +17,5 @@ public class Person implements Comparable<Person>{
     public int compareTo(Person arg0) {
         return Long.compare(id, arg0.id);
     }
+    
 }
