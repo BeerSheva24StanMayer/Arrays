@@ -1,5 +1,4 @@
-
-package run.util;
+package telran.util;
 
 import java.util.Comparator;
 import java.util.function.Predicate;
