@@ -2,8 +2,6 @@ package run.util;
 
 import java.util.function.Predicate;
 
-
-
 public class CharacterRule {
 public boolean flag;
 public Predicate<Character> predicate;
