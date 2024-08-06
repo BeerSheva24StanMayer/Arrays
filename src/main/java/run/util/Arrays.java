@@ -1,16 +1,12 @@
+
 package run.util;
 
-import java.security.Key;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.function.Predicate;
 
-import org.w3c.dom.css.Counter;
-
-import run.util.CharacterRule;
-
 public class Arrays {
+    public static final String DELIMETER = ";";
+
     public static int search(int[] ar, int key) {
         int index = 0;
         while (index < ar.length && key != ar[index]) {
@@ -25,22 +21,39 @@ public class Arrays {
         return res;
     }
 
+    /**
+     * 
+     * @param ar
+     * @param index
+     * @param number
+     * @return reference to a new array containing @param number at @param index
+     */
     public static int[] insert(int[] ar, int index, int number) {
-        int[] arNew = new int[ar.length + 1];
-        arNew[index] = number;
-        System.arraycopy(ar, 0, arNew, 0, index);
-        System.arraycopy(ar, index, arNew, index + 1, ar.length - index);
-        return arNew;
+        // creates new array with all elements from the given "ar" and
+        // the given "number" at the given index
+        // to apply System.arraycopy method
+        int[] res = java.util.Arrays.copyOf(ar, ar.length + 1);
+        System.arraycopy(ar, index, res, index + 1, ar.length - index);
+        res[index] = number;
+        return res;
     }
 
+    /**
+     * 
+     * @param numbers
+     * @param index
+     * @return new array with no removed from @param numbers number at @param index
+     */
     public static int[] remove(int[] numbers, int index) {
-        int[] numbersNew = new int[numbers.length - 1];
-        System.arraycopy(numbers, 0, numbersNew, 0, index);
-        System.arraycopy(numbers, index + 1, numbersNew, index, numbers.length - index - 1);
-        return numbersNew;
+        // creates new array with no element in "numbers" at "index"
+        // to apply System.arraycopy method
+        int[] res = java.util.Arrays.copyOf(numbers, numbers.length - 1);
+        System.arraycopy(numbers, index + 1, res, index, res.length - index);
+        return res;
+
     }
 
-    public static boolean pushMaxAtTheEnd(int[] ar, int length) {
+    private static boolean pushMaxAtEnd(int[] ar, int length) {
         boolean res = true;
         for (int i = 0; i < length; i++) {
             if (ar[i] > ar[i + 1]) {
@@ -62,11 +75,25 @@ public class Arrays {
         boolean flSorted = false;
         while (!flSorted) {
             length--;
-            flSorted = pushMaxAtTheEnd(ar, length);
+            flSorted = pushMaxAtEnd(ar, length);
         }
     }
 
+    /**
+     * 
+     * @param ar  - sorted array
+     * @param key - being searched number
+     * @return see comments definition
+     */
     public static int binarySearch(int[] ar, int key) {
+        // index of the search key, if it is contained in the array;
+        // otherwise, (-(insertion point) - 1).
+        // The insertion point is defined as the point at which the key would be
+        // inserted into
+        // the array: the index of the first element greater than the key, or a.length
+        // if all elements in the array are less than the specified key. Note that this
+        // guarantees that the return value will be >= 0 if and only if the key is
+        // found.
         int left = 0;
         int right = ar.length - 1;
         int middle = (left + right) / 2;
@@ -82,70 +109,77 @@ public class Arrays {
     }
 
     public static int[] insertSorted(int[] arSorted, int number) {
-        int flIndex = binarySearch(arSorted, number);
-        if (-flIndex == arSorted.length) {
-            flIndex = -flIndex;
-        } else if (flIndex < 0) {
-            flIndex = -flIndex - 1;
-        } else {
-            flIndex += 1;
+        // arSorted is sorted array
+        // to insert number at index to keep the array sorted
+        // additional sorting is disallowed
+        int index = binarySearch(arSorted, number);
+        if (index < 0) {
+            index = -index - 1;
         }
-        int[] arNew = java.util.Arrays.copyOf(arSorted, arSorted.length + 1);
-        System.arraycopy(arSorted, flIndex, arNew, flIndex + 1, arSorted.length - flIndex);
-        arNew[flIndex] = number;
-        return arNew;
+        return insert(arSorted, index, number);
     }
 
     public static boolean isOneSwap(int[] array) {
-        int j = -1;
-        int k = -1;
-        int i = 0;
-        boolean flOut = true;
-        while ((i < array.length - 1) && (j < 0 || k < 0)) {
+        // return true if a given array has exactly one swap to get sorted array
+        // the swaped array's elements may or may not be neighbors
+        boolean res = false;
+        int index1 = -1;
+        int index2 = 0;
+        index1 = getFirstIndex(array);
+        if (index1 > -1) {
+            index2 = getSecondIndex(array, index1);
+            res = isOneSwapCheck(array, index1, index2);
+        }
+        return res;
 
-            if (array[i] > array[i + 1]) {
-                if (j < 0) {
-                    j = i;
-                } else {
-                    k = i + 1;
-                }
-            }
-            i++;
+    }
+
+    private static boolean isOneSwapCheck(int[] array, int index1, int index2) {
+        swap(array, index1, index2);
+        boolean res = isArraySorted(array);
+        swap(array, index2, index1); // array restored after swap
+        return res;
+    }
+
+    private static boolean isArraySorted(int[] array) {
+        int index = 1;
+        while (index < array.length && array[index] >= array[index - 1]) {
+            index++;
         }
-        if (j >= 0) {
-            if (k < 0) {
-                k = j + 1;
-            }
-        } else if (j < 0) {
-            flOut = false;
+        return index == array.length;
+    }
+
+    private static int getSecondIndex(int[] array, int index1) {
+        int index = array.length - 1;
+        int lowBorder = index1 + 1;
+        while (index > lowBorder && array[index] >= array[index1]) {
+            index--;
         }
-        if (flOut == true) {
-            int[] testArray = java.util.Arrays.copyOf(array, array.length);
-            swap(testArray, j, k);
-            for (int b = 0; b < testArray.length - 2; b++) {
-                if (testArray[b] > testArray[b + 1]) {
-                    flOut = false;
-                    break;
-                }
-            }
+
+        return index;
+
+    }
+
+    private static int getFirstIndex(int[] array) {
+        int index = 0;
+        int limit = array.length - 1;
+        while (index < limit && array[index] <= array[index + 1]) {
+            index++;
         }
-        return flOut;
+        return index == limit ? -1 : index;
     }
 
     public static <T> void sort(T[] array, Comparator<T> comparator) {
         int length = array.length;
         boolean flSort = false;
-
         do {
             length--;
             flSort = true;
             for (int i = 0; i < length; i++) {
-
                 if (comparator.compare(array[i], array[i + 1]) > 0) {
                     swap(array, i, i + 1);
                     flSort = false;
                 }
-
             }
         } while (!flSort);
     }
@@ -154,28 +188,29 @@ public class Arrays {
         T tmp = array[i];
         array[i] = array[j];
         array[j] = tmp;
+
     }
 
     public static <T> int binarySearch(T[] array, T key, Comparator<T> comp) {
-        int indexH = array.length - 1;
-        int indexL = 0;
-        int indexM = (indexH + indexL) / 2;
-        int comRes = 0;
-        while (indexL <= indexH && (comRes = comp.compare(array[indexM], key)) != 0) {
-            if (comRes > 0) {
-                indexH = indexM - 1;
+        int left = 0;
+        int right = array.length - 1;
+        int middle = (left + right) / 2;
+        int compRes = 0;
+        while (left <= right && (compRes = comp.compare(key, array[middle])) != 0) {
+            if (compRes < 0) {
+                right = middle - 1;
             } else {
-                indexL = indexM + 1;
+                left = middle + 1;
             }
-            indexM = (indexH + indexL) / 2;
+            middle = (left + right) / 2;
         }
-        return indexL > indexH ? -(indexL + 1) : indexM;
+        return left > right ? -(left + 1) : middle;
+
     }
 
     @SuppressWarnings("unchecked")
     public static <T> int binarySearch(T[] array, T key) {
-        // TODO
-        // The code should be based on binarySearch
+        // The code should be based on binarySearch with comparator
         return binarySearch(array, key, (Comparator<T>) Comparator.naturalOrder());
     }
 
@@ -194,10 +229,10 @@ public class Arrays {
             }
         }
         return result;
-
     }
 
     public static <T> T[] removeIf(T[] array, Predicate<T> predicate) {
+
         return find(array, predicate.negate());
     }
 
@@ -209,38 +244,42 @@ public class Arrays {
      * @return empty error message if array of chars matches all rules otherwise
      *         specific error message saying what rules don't match
      */
-    public static String matchesRules(char[] chars, CharacterRule[] mustBeRules, CharacterRule[] mustNotBeRules) {
-        // TODO
-        int j = 0;
-        int k = 0;
-        ArrayList<String> messages = new ArrayList<String>();
-        int count = 0;
-        while ((j < mustBeRules.length) && (mustBeRules.length > messages.size())) {
-            boolean flagMust = true;
-            int i = 0;
-            while (i < chars.length && flagMust) {
-                flagMust = mustBeRules[j].ifTrue(chars[i]);
-                i++;
-            }
-            if (flagMust) {
-                messages.add(mustBeRules[j].errorMessage);
-                count++;
-            }
-            j++;
+    public static String matchesRules(char[] chars,
+            CharacterRule[] mustBeRules, CharacterRule[] mustNotBeRules) {
+                clearRules(mustBeRules);
+                clearRules(mustNotBeRules);
+        for (int i = 0; i < chars.length; i++) {
+            updateRules(chars[i], mustBeRules);
+            updateRules(chars[i], mustNotBeRules);
         }
-        while ((k < mustNotBeRules.length) && (mustNotBeRules.length > (messages.size() - count))) {
-            boolean flagNotMust = false;
-            int i = 0;
-            boolean b = mustNotBeRules[k].flag;
-            while (i < chars.length && !flagNotMust) {
-                flagNotMust = mustNotBeRules[k].ifTrue(chars[i]);
-                i++;
-            }
-            if (flagNotMust) {
-                messages.add(mustNotBeRules[k].errorMessage);
-            }
-            k++;
+        String errorMessagesMustBe = getErrorMessages(mustBeRules, true);
+        String errorMessagesMustNotBe = getErrorMessages(mustNotBeRules, false);
+        return errorMessagesMustBe + (errorMessagesMustBe.isEmpty() || errorMessagesMustNotBe.isEmpty() ? "" : DELIMETER) + errorMessagesMustNotBe;
+    }
+
+    private static void clearRules(CharacterRule[] rules) {
+        for(int i = 0; i < rules.length; i++) {
+            rules[i].flag = false;
         }
-        return String.join(" || ", messages);
+    }
+
+    private static String getErrorMessages(CharacterRule[] rules, boolean flag) {
+        CharacterRule[] errorRules = find(rules, r -> r.flag != flag);
+        String res = "";
+        if (errorRules.length != 0) {
+            res = errorRules[0].errorMessage;
+            for (int i = 1; i < errorRules.length; i++) {
+                res += DELIMETER + errorRules[i].errorMessage;
+            }
+        }
+        return res;
+    }
+
+    private static void updateRules(char c, CharacterRule[] rules) {
+        for (int i = 0; i < rules.length; i++) {
+            if(rules[i].predicate.test(c)) {
+                rules[i].flag = true;
+            }
+        }
     }
 }
